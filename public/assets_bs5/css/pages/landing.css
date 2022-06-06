@@ -1,0 +1,151 @@
+.logo {
+  font-size: 1.5rem;
+  align-items: center;
+  display: flex;
+}
+
+.logo img {
+  margin-right: 1rem;
+  height: 1.5rem;
+}
+
+.navbar-dark .navbar-nav .nav-link, .btn-secondary {
+  color: white !important;
+}
+
+.nav-item a {
+  color: #333333;
+  opacity: 0.5;
+}
+
+.nav-item.active a {
+  color: #333333;
+  font-weight: 700;
+  opacity: 1;
+}
+
+.btn-secondary:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-rounded {
+  border-radius: 20px;
+}
+
+.display-3, .display-4 {
+  font-weight: 700;
+}
+
+.accordion-menu {
+  color: #333333;
+  font-weight: 700;
+}
+
+.hero, .fifth-hero {
+  position: relative;
+  color: white;
+}
+
+.hero::after {
+  content: " ";
+  position: absolute;
+  top: -400px;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #197FC0;
+  z-index: -1;
+}
+
+.below-hero, .third-hero, .fourth-hero, .sixth-hero, .seventh-hero, .eighth-hero, .footer {
+  position: relative;
+  color: #333333;
+}
+
+.below-hero::after, .fourth-hero::after, .sixth-hero::after, .eighth-hero::after, .footer::after {
+  content: " ";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  z-index: -1;
+}
+
+.third-hero::after, .seventh-hero::after {
+  content: " ";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(25, 127, 192, 0.1);
+  z-index: 0;
+}
+
+.fifth-hero::after {
+  content: " ";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #076FB1;
+  z-index: -1;
+}
+
+.omnis {
+  position: absolute;
+  color: white;
+  padding-left: 45px;
+  right: 10px;
+  bottom: 40px;
+}
+
+.ullam {
+  position: absolute;
+  color: white;
+  padding-left: 45px;
+  left: 0;
+  right: 50px;
+  bottom: 30px;
+}
+
+.nisi {
+  position: absolute;
+  color: white;
+  padding-left: 65px;
+  right: 50px;
+  bottom: 50px;
+}
+
+.container-fluid {
+  width: 100%;
+  padding-right: 0;
+  padding-left: 0;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.opacity-5 {
+  opacity: 0.5;
+}
+
+.below-hero button:not(.collapsed) .rotate-icon {
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.mt-10 {
+  margin-top: 10rem !important;
+}
+
+.container-5 {
+  max-width: 450px;
+}
+
+.text-footer {
+  padding-bottom: 1rem;
+  bottom: 0;
+}
