@@ -1,0 +1,20 @@
+body {
+  background: #0193e9;
+  background: linear-gradient(253.82deg, #0193E9 1.06%, #7DCFC8 98.98%);
+}
+
+.card-signin {
+  background: #ebf4ff;
+}
+
+.btn-google {
+  color: #ff4d4f;
+  background: #FFF1F0;
+  border: 1px solid #FFA39E;
+}
+
+.btn-facebook {
+  color: #1890ff;
+  background: #E6F7FF;
+  border: 1px solid #69C0FF;
+}
