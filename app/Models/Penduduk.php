@@ -17,4 +17,17 @@ class Penduduk extends Model
     protected $table = 'penduduk';
 
     protected $guarded = [];
+
+    public function pendudukDatang(){
+        return $this->hasOne('App\Models\PendudukDatang', 'id_penduduk');
+    }
+    public function pendudukKeluar(){
+        return $this->hasOne('App\Models\PendudukDatang', 'id_penduduk');
+    }
+    public function kelahiran(){
+        return $this->hasOne('App\Models\Kelahiran', 'id_penduduk');
+    }
+    public function kematian(){
+        return $this->hasOne('App\Models\Kematian', 'id_penduduk');
+    }
 }
