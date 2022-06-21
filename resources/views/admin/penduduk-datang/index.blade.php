@@ -1,16 +1,16 @@
 @extends('layouts.backend.backend_bs5.main')
 
 @section('title')
-   Penduduk - Admin
+   Penduduk Datang - Admin
 @endsection
 
 @section('ribbon')
     <div class="content-header">
-        <h4 class="content-title">Penduduk</h4>
+        <h4 class="content-title">Penduduk Datang</h4>
         <div class="content-breadcrumb ms-auto">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Beranda</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Penduduk</li>
+                <li class="breadcrumb-item active" aria-current="page">Penduduk Datang</li>
             </ol>
         </div>
     </div>
@@ -24,7 +24,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 text-center">
-                                <h4 class="content-title mt-0 pt-0 text-muted">Data Penduduk</h4>
+                                <h4 class="content-title mt-0 pt-0 text-muted">Data Penduduk Datang</h4>
                             </div>
                         </div>
                         <div class="row">
@@ -57,7 +57,9 @@
                         <div class="row">
                             <div class="col-12">
                                 <a class="btn btn-sm btn-danger" href="{{ route('home') }}"><i class="ri-arrow-left-circle-line"></i> Kembali</a>
+                                @if(Auth()->user()->level_akses == '0')
                                 <button class="btn btn-sm btn-primary" onclick="tambahPenduduk()"><i class="ri-add-box-fill"></i> Tambah</button>
+                                @endif
                             </div>
                         </div>
                         <div class="row">
@@ -67,27 +69,42 @@
                                         <thead>
                                             <tr>
                                                 <th class="text-center align-middle">No</th>
-                                                <th class="text-center align-middle">NIK</th>
                                                 <th class="text-center align-middle">Nama</th>
-                                                <th class="text-center align-middle">Tempat Lahir</th>
-                                                <th class="text-center align-middle">Tgl Lahir</th>
-                                                <th class="text-center align-middle">Alamat</th>
+                                                <th class="text-center align-middle">Tgl Datang</th>
+                                                <th class="text-center align-middle">Alamat Asal</th>
+                                                <th class="text-center align-middle">Alamat Tujuan</th>
+                                                <th class="text-center align-middle">Sebab Pindah</th>
+                                                @if(Auth()->user()->level_akses == '0')
                                                 <th class="text-center align-middle">Aksi</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @forelse ($penduduk as $key => $item)
+                                            @forelse ($list as $key => $item)
                                                 <tr>
-                                                    <td>{{ ($penduduk->currentpage()-1) * $penduduk->perpage() + $key + 1 }}</td>
-                                                    <td>{{ $item->nik }}</td>
-                                                    <td>{{ $item->nama }}</td>
-                                                    <td>{{ $item->tempat_lahir }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($item->tgl_lahir)->format('d/m/Y')}}</td>
-                                                    <td>{{ $item->alamat }}</td>
+                                                    <td>{{ ($list->currentpage()-1) * $list->perpage() + $key + 1 }}</td>
+                                                    <td>{{ ($item->penduduk) ? $item->penduduk->nama : '' }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y')}}</td>
+                                                    <td>
+                                                        RT {{ $item->rt_asal }}/
+                                                        RW {{ $item->rw_asal }},
+                                                        Kel. {{ $item->desa_asal }},
+                                                        Kec. {{ $item->kecamatan_asal }}
+                                                    </td>
+                                                    <td>
+                                                        RT {{ $item->rt_tujuan }}/
+                                                        RW {{ $item->rw_tujuan }},
+                                                        Kel. Tangkisan Pos,
+                                                        Kec. Jogonalan
+                                                    </td>
+                                                    <td>{{ $item->alasan_pindah }}</td>
+                                                    @if(Auth()->user()->level_akses == '0')
                                                     <td class="text-center">
                                                         <button class="btn btn-sm btn-warning" data-item="{{ $item }}" onclick="editPenduduk(this)"><i class="ri-edit-2-line"></i></button>
-                                                        <a href="{{ route('admin.penduduk.delete',[$item]) }}" class="btn btn-sm btn-danger delete"><i class="ri-delete-bin-line"></i></a>
+                                                        <a href="{{ route('admin.penduduk-datang.delete',[$item]) }}" class="btn btn-sm btn-danger delete"><i class="ri-delete-bin-line"></i></a>
+                                                        <a href="{{ route('admin.penduduk-datang.generate-surat',[$item]) }}" class="btn btn-sm btn-primary"><i class="ri-mail-line"></i> Generate Surat</a>
                                                     </td>
+                                                    @endif
                                                 </tr>
                                             @empty
                                                 <tr>
@@ -96,7 +113,7 @@
                                             @endforelse
                                         </tbody>
                                     </table>
-                                    {{ $penduduk->links() }}
+                                    {{ $list->links() }}
                                 </div>
                             </div>
                         </div>
@@ -111,12 +128,17 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"><strong>Data Penduduk</strong></h5>
+                    <h5 class="modal-title" id="exampleModalLabel"><strong>Data Penduduk Datang</strong></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="post" id="formdetail" action="{{ route('admin.penduduk.store') }}" enctype="multipart/form-data">
+                <form method="post" id="formdetail" action="{{ route('admin.penduduk-datang.store') }}" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="row">
+                            <div class="col-sm-12">
+                                <p class="fw-bold">Data Pribadi</p>
+                            </div>
+                        </div>
+                        <div class="row ps-4">
                             <!-- Hidden -->
                             <input type="hidden" name="_token" id="csrf-token" value="{{ csrf_token() }}" />
                             <input type="hidden" name="id_edit" id="id_edit" />
@@ -127,28 +149,43 @@
                                 @error('nik')<label class="text-danger">{{$message}}</label>@enderror
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row ps-4">
                             <div class="col-sm-12">
                                 <label>Nama :</label>
                                 <input type="text" class="form-control input-sm" id="nama" name="nama" value="">
                                 @error('nama')<label class="text-danger">{{$message}}</label>@enderror
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row ps-4">
                             <div class="col-sm-12">
                                 <label>Tempat Lahir :</label>
                                 <input class="form-control input-sm" type="text" name="tempat_lahir" id="tempat_lahir">
                                 @error('tempat_lahir')<label class="text-danger">{{$message}}</label>@enderror
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row ps-4">
                             <div class="col-sm-12">
                                 <label>Tgl Lahir :</label>
                                 <input class="form-control input-sm" type="date" name="tgl_lahir" id="tgl_lahir">
                                 @error('tgl_lahir')<label class="text-danger">{{$message}}</label>@enderror
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row ps-4">
+                            <div class="col-sm-12">
+                                <label>Agama :</label>
+                                <select class="form-select form-contol" name="agama" id="agama">
+                                    <option value="">PILIH</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Katolik">Katolik</option>
+                                    <option value="Kristen">Kristen</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Budha">Budha</option>
+                                    <option value="Konghucu">Konghucu</option>
+                                </select>
+                                @error('agama')<label class="text-danger">{{$message}}</label>@enderror
+                            </div>
+                        </div>
+                        <div class="row ps-4">
                             <div class="col-sm-6">
                                 <label>Jenis Kelamin:</label>
                                 <div class="form-check">
@@ -165,22 +202,7 @@
                                 @error('jenkel')<label class="text-danger">{{$message}}</label>@enderror
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label>Agama :</label>
-                                <select class="form-select form-contol" name="agama" id="agama">
-                                    <option value="">PILIH</option>
-                                    <option value="Islam">Islam</option>
-                                    <option value="Katolik">Katolik</option>
-                                    <option value="Kristen">Kristen</option>
-                                    <option value="Hindu">Hindu</option>
-                                    <option value="Budha">Budha</option>
-                                    <option value="Konghucu">Konghucu</option>
-                                </select>
-                                @error('agama')<label class="text-danger">{{$message}}</label>@enderror
-                            </div>
-                        </div>
-                        <div class="row">
+                        <div class="row ps-4">
                             <div class="col-sm-12">
                                 <label>Pendidikan Terakhir :</label>
                                 <select class="form-select form-contol" name="pendidikan" id="pendidikan">
@@ -196,13 +218,96 @@
                                 @error('pendidikan')<label class="text-danger">{{$message}}</label>@enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="col-sm-12">
-                                <label>Alamat :</label>
-                                <textarea class="form-control" name="alamat" id="alamat" cols="30" rows="10"></textarea>
-                                @error('alamat')<label class="text-danger">{{$message}}</label>@enderror
+                                <hr>
+                                <p class="fw-bold">Data Kepindahan</p>
                             </div>
                         </div>
+
+                        <div class="row ps-4">
+                            <div class="col-sm-12">
+                                <label>RT Asal :</label>
+                                <input class="form-control text-end" type="text" name="rt_asal" id="rt_asal">
+                                @error('rt_asal')<label class="text-danger">{{$message}}</label>@enderror
+                            </div>
+                        </div>
+                        <div class="row ps-4">
+                            <div class="col-sm-12">
+                                <label>RW Asal :</label>
+                                <input class="form-control text-end" type="text" name="rw_asal" id="rw_asal">
+                                @error('rw_asal')<label class="text-danger">{{$message}}</label>@enderror
+                            </div>
+                        </div>
+                        <div class="row ps-4">
+                            <div class="col-sm-12">
+                                <label>Desa/Kelurahan Asal :</label>
+                                <input class="form-control" type="text" name="desa_asal" id="desa_asal">
+                                @error('desa_asal')<label class="text-danger">{{$message}}</label>@enderror
+                            </div>
+                        </div>
+                        <div class="row ps-4">
+                            <div class="col-sm-12">
+                                <label>Kecamatan Asal :</label>
+                                <input class="form-control" type="text" name="kecamatan_asal" id="kecamatan_asal">
+                                @error('kecamatan_asal')<label class="text-danger">{{$message}}</label>@enderror
+                            </div>
+                        </div>
+                        <div class="row ps-4">
+                            <div class="col-sm-12">
+                                <label>Alasan Pindah :</label>
+                                <textarea class="form-control" name="alasan_pindah" id="alasan_pindah" cols="30" rows="10"></textarea>
+                                @error('alasan_pindah')<label class="text-danger">{{$message}}</label>@enderror
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr>
+                                <p class="fw-bold">Data Tujuan</p>
+                            </div>
+                        </div>
+
+                        <div class="row ps-4">
+                            <div class="col-sm-12">
+                                <label>RT Tujuan :</label>
+                                <select class="form-select form-control" name="rt_tujuan" id="rt_tujuan">
+                                    <option value="">PILIH</option>
+                                    <option value="001">001</option>
+                                    <option value="002">002</option>
+                                    <option value="003">003</option>
+                                    <option value="004">004</option>
+                                    <option value="005">005</option>
+                                    <option value="006">006</option>
+                                    <option value="007">007</option>
+                                    <option value="008">008</option>
+                                    <option value="009">009</option>
+                                    <option value="010">010</option>
+                                </select>
+                                @error('rt_tujuan')<label class="text-danger">{{$message}}</label>@enderror
+                            </div>
+                        </div>
+                        <div class="row ps-4">
+                            <div class="col-sm-12">
+                                <label>RW Tujuan :</label>
+                                <select class="form-select form-control" name="rw_tujuan" id="rw_tujuan">
+                                    <option value="">PILIH</option>
+                                    <option value="001">001</option>
+                                    <option value="002">002</option>
+                                    <option value="003">003</option>
+                                    <option value="004">004</option>
+                                    <option value="005">005</option>
+                                    <option value="006">006</option>
+                                    <option value="007">007</option>
+                                    <option value="008">008</option>
+                                    <option value="009">009</option>
+                                    <option value="010">010</option>
+                                </select>
+                                @error('rw_tujuan')<label class="text-danger">{{$message}}</label>@enderror
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -227,9 +332,15 @@
             $('#agama').val('')
             $('#jenkel').val('')
             $('#pendidikan').val('')
-            $('#alamat').val('')
             $('#laki').attr('checked', false)
             $('#perempuan').attr('checked', false)
+            $('#rt_asal').val('')
+            $('#rw_asal').val('')
+            $('#desa_asal').val('')
+            $('#kecamatan_asal').val('')
+            $('#alasan_pindah').val('')
+            $('#rt_tujuan').val('')
+            $('#rw_tujuan').val('')
 
             $('#modal-edit').modal('show')
         }
@@ -238,18 +349,26 @@
             var item = $(obj).data('item');
             console.log(item)
             $('#id_edit').val(item.id)
-            $('#nik').val(item.nik)
-            $('#nama').val(item.nama)
-            $('#tempat_lahir').val(item.tempat_lahir)
-            $('#tgl_lahir').val(item.tgl_lahir)
-            $('#agama').val(item.agama)
-            if(item.jenkel == 'L'){
-                $('#laki').attr('checked', true)
-            }else{
-                $('#perempuan').attr('checked', true)
+            if(item.penduduk){
+                $('#nik').val(item.penduduk.nik)
+                $('#nama').val(item.penduduk.nama)
+                $('#tempat_lahir').val(item.penduduk.tempat_lahir)
+                $('#tgl_lahir').val(item.penduduk.tgl_lahir)
+                $('#agama').val(item.penduduk.agama)
+                if(item.penduduk.jenkel == 'L'){
+                    $('#laki').attr('checked', true)
+                }else{
+                    $('#perempuan').attr('checked', true)
+                }
+                $('#pendidikan').val(item.penduduk.pendidikan)
             }
-            $('#pendidikan').val(item.pendidikan)
-            $('#alamat').val(item.alamat)
+            $('#rt_asal').val(item.rt_asal)
+            $('#rw_asal').val(item.rw_asal)
+            $('#desa_asal').val(item.desa_asal)
+            $('#kecamatan_asal').val(item.kecamatan_asal)
+            $('#alasan_pindah').val(item.alasan_pindah)
+            $('#rt_tujuan').val(item.rt_tujuan)
+            $('#rw_tujuan').val(item.rw_tujuan)
 
             $('#modal-edit').modal('show')
         }

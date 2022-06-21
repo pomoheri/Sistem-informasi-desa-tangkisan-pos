@@ -21,8 +21,9 @@ class Penduduk extends Migration
             $table->string('jenkel',1);
             $table->date('tgl_lahir');
             $table->string('tempat_lahir',100);
-            $table->string('agama',15);
-            $table->string('pendidikan', 25);
+            $table->string('agama',15)->nullable();
+            $table->string('pendidikan', 25)->nullable();
+            $table->string('status',30)->nullable();
             $table->timestamps();
         });
     }

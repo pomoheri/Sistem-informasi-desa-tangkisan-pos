@@ -27,5 +27,12 @@ class DatabaseSeeder extends Seeder
             'password'=> bcrypt('12345678'),
             'level_akses' => '1'
         ]);
+
+        User::create([
+            'name' => 'warga',
+            'email' => 'warga@gmail.com',
+            'password'=> bcrypt('12345678'),
+            'level_akses' => '2'
+        ]);
     }
 }

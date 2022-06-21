@@ -5,8 +5,6 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link rel="shortcut icon"  type="image/x-icon" href="{{ asset('assets_bs5/img/favicon.ico') }}">
-        <link rel="icon" type="image/x-icon" href="{{ asset('assets_bs5/img/favicon.ico') }}">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700" />
         <link rel="stylesheet" href="{{ asset('assets_bs5/fonts/remixicon/fonts/remixicon.css') }}">
         <link rel="stylesheet" href="{{ asset('assets_bs5/vendor/perfect-scrollbar/css/perfect-scrollbar.css') }}">
